@@ -55,8 +55,7 @@ Icons made by Freepik from www.flaticon.com
 
 		<includefile source="strings/strings.xml" />
 		<includefile source="graphics/graphics_icons.xml" />
-		<includefile source="graphics/graphics_tabs.xml" />
-		
+
 		<icon name="FriendZone_icon" file="graphics/icons/FriendZone.png" />
 
 		<script name="PowerUpFZ">

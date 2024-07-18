@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- 
-  Please see the license.html file included with this distribution for 
+<!--
+  Please see the license.html file included with this distribution for
   attribution and copyright information.
 -->
 
 <root>
+	<string name="tab_cohorts">Cohorts</string>
+
 	<windowclass name="charsheet" merge="join">
 		<sheetdata>
 
@@ -22,7 +24,7 @@
 						if tab and type(tab) == "table" then
 							for index,tabInfo in ipairs(tab) do
 								if (type(tabInfo) == "table") and (tabInfo.subwindow[1] == "logs") then
-									tabInfo.icon[1] = "tab_cohorts";
+									tabInfo.tabres[1] = "tab_cohorts";
 								end
 							end
 						end
