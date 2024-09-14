@@ -36,21 +36,21 @@ function parseNPCPower(nodePower, bAllowSpellDataOverride)
 	return parseNPCPowerOriginal(nodePower, bAllowSpellDataOverride)
 end
 
-function parsePower(sPowerName, sPowerDesc, bPC, bMagic)
+function parsePower(tData)
 	if nodeCohort then
-		sPowerDesc = sPowerDesc:gsub("[%+%-]%d+ %+ ?PB", encodeNumericAddition);
-		sPowerDesc = sPowerDesc:gsub("%d+d%d+ %+ ?PB", encodeDiceAddition);
-		sPowerDesc = sPowerDesc:gsub("a DC %d+ [p%+]l?u?s? ?PB", encodeNumericReplacement);
-		sPowerDesc = sPowerDesc:gsub("DC Players?", encodeDcPlayerReplacement);
-		sPowerDesc = sPowerDesc:gsub("your .+ attack modifier", encodeAttackModifierReplacement);
-		sPowerDesc = sPowerDesc:gsub("extra PB ?%w* damage", encodeExtraDamage);
-		sPowerDesc = sPowerDesc:gsub("takes PB ?%w* damage", encodeExtraDamage);
-		sPowerDesc = sPowerDesc:gsub("[dgt][ea][aik][lne]s? %d+ times PB", encodeNumericMultiplication);
-		sPowerDesc = sPowerDesc:gsub("PBd%d+", encodeDiceMultiplication);
-		sPowerDesc = sPowerDesc:gsub("equal to %d+ times the %w+%'?s? level", encodeNumericLevelMultiplication);
+		tData.sDesc = tData.sDesc:gsub("[%+%-]%d+ %+ ?PB", encodeNumericAddition);
+		tData.sDesc = tData.sDesc:gsub("%d+d%d+ %+ ?PB", encodeDiceAddition);
+		tData.sDesc = tData.sDesc:gsub("a DC %d+ [p%+]l?u?s? ?PB", encodeNumericReplacement);
+		tData.sDesc = tData.sDesc:gsub("DC Players?", encodeDcPlayerReplacement);
+		tData.sDesc = tData.sDesc:gsub("your .+ attack modifier", encodeAttackModifierReplacement);
+		tData.sDesc = tData.sDesc:gsub("extra PB ?%w* damage", encodeExtraDamage);
+		tData.sDesc = tData.sDesc:gsub("takes PB ?%w* damage", encodeExtraDamage);
+		tData.sDesc = tData.sDesc:gsub("[dgt][ea][aik][lne]s? %d+ times PB", encodeNumericMultiplication);
+		tData.sDesc = tData.sDesc:gsub("PBd%d+", encodeDiceMultiplication);
+		tData.sDesc = tData.sDesc:gsub("equal to %d+ times the %w+%'?s? level", encodeNumericLevelMultiplication);
 	end
 
-	local aMasterAbilities = parsePowerOriginal(sPowerName, sPowerDesc, bPC, bMagic)
+	local aMasterAbilities = parsePowerOriginal(tData)
 
 	if nodeCohort then
 		local nodeCommander = FriendZone.getCommanderNode(nodeCohort);
