@@ -1,5 +1,5 @@
--- 
--- Please see the license.txt file included with this distribution for 
+--
+-- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
 
@@ -63,7 +63,7 @@ function getCheck(rActor, sCheck, sSkill)
 	end
 
 	local nMod, bADV, bDIS, sAddText = getCheckOriginal(rActor, sCheck, sSkill);
-	if sNodeType ~= "pc" and FriendZone.isCohort(rActor) and hasProfBonusTrait(nodeActor, "ability check") then
+	if sNodeType ~= "pc" and FriendZone.isCohort(rActor) and (hasProfBonusTrait(nodeActor, "ability check") or sSkill:lower():match(sSkill:sub(1,3):lower() .. "[^,]+%+ ?pb")) then
 		local nodeCommander = FriendZone.getCommanderNode(rActor);
 		local rCommander = ActorManager.resolveActor(nodeCommander);
 		local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
