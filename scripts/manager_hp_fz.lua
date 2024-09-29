@@ -58,9 +58,11 @@ function updateNpcHitPoints(nodeNPC)
 			for _,sLine in ipairs(aLines) do
 				sLine = sLine:gsub("</?%w>", ""):lower();
 				if StringManager.startsWith(sLine, "hit points:") then
-					if tryParseHitPointLine(sLine, nodeNPC, nodeCommander) then
-						break;
-					end
+				    if (sLine:match("%d")) then
+    					if tryParseHitPointLine(sLine, nodeNPC, nodeCommander) then
+	    					break;
+		    			end
+                    end
 				end
 			end
 		end
