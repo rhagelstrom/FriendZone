@@ -58,11 +58,9 @@ function updateNpcHitPoints(nodeNPC)
 			for _,sLine in ipairs(aLines) do
 				sLine = sLine:gsub("</?%w>", ""):lower();
 				if StringManager.startsWith(sLine, "hit points:") then
-				    if (sLine:match("%d")) then
-    					if tryParseHitPointLine(sLine, nodeNPC, nodeCommander) then
-	    					break;
-		    			end
-                    end
+					if tryParseHitPointLine(sLine, nodeNPC, nodeCommander) then
+    					break;
+	    			end
 				end
 			end
 		end
@@ -96,7 +94,7 @@ function tryParseHitPointLine(sLine, nodeNPC, nodeCommander)
 		nAbility = DB.getValue(nodeCommander, "abilities.".. sAbility .. ".bonus", 0);
 	end
 
-	local nPerLevel = CharManager.convertSingleNumberTextToNumber(sPerLevel);
+	local nPerLevel = CharBuildManager.convertSingleNumberTextToNumber(sPerLevel);
 	if (nPerLevel or 0) == 0 then
 		nPerLevel = tonumber(sPerLevel);
 	end
