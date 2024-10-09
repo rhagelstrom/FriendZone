@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- 
-  Please see the license.html file included with this distribution for 
+<!--
+  Please see the license.html file included with this distribution for
   attribution and copyright information.
 -->
 
@@ -29,31 +29,22 @@
 			end
 		</script>
 		<sheetdata>
-			<button_iedit name="cohorts_iedit">
-				<anchored position="insidebottomright" offset="10,10" />
-				<tooltip textres="char_logs_tooltip_edit" />
-				<script>
-					function onValueChanged()
-						local bEditMode = (getValue() == 1);
-						
-						window.contents.subwindow.cohortlist.update();
-						window.contents.subwindow.unitlist.update();
-					end
-				</script>
+			<anchor_content_top />
+			<anchor_content_bottom />
+
+			<area_content_framed_groupbox_bottom name="area_controls">
+				<anchored height="20" />
+			</area_content_framed_groupbox_bottom>
+			<button_iedit name="sheet_iedit">
+				<anchored to="area_controls" position="insidetopright" offset="0,0" />
+				<edittarget>content</edittarget>
 			</button_iedit>
 
-			<subwindow name="contents">
-				<anchored>
-					<top offset="0" />
-					<bottom offset="-30" />
-					<left offset="0" />
-					<right offset="-15" />
-				</anchored>
+			<sub_content_scroll name="content">
 				<class>charsheet_cohorts_contents</class>
-				<activate />
 				<fastinit />
-			</subwindow>
-			<scrollbar_charcontents />
+			</sub_content_scroll>
+			<scrollbar_content />
 		</sheetdata>
 	</windowclass>
 
@@ -165,12 +156,9 @@
 				<class>npc</class>
 				<readonly />
 			</linkcontrol>
-			<button_idelete name="idelete">
-				<anchored to="rightanchor">
-					<top />
-					<right anchor="left" offset="-5" />
-				</anchored>
-			</button_idelete>
+			<button_listitem_idelete name="idelete">
+				<editmode>sheet_iedit</editmode>
+			</button_listitem_idelete>
 
 			<string_textlistitem name="name">
 				<anchored to="rightanchor">
@@ -197,12 +185,9 @@
 				<class>reference_unit</class>
 				<readonly />
 			</linkcontrol>
-			<button_idelete name="idelete">
-				<anchored to="rightanchor">
-					<top />
-					<right anchor="left" offset="-5" />
-				</anchored>
-			</button_idelete>
+			<button_listitem_idelete name="idelete">
+				<editmode>sheet_iedit</editmode>
+			</button_listitem_idelete>
 
 			<string_textlistitem name="name">
 				<anchored to="rightanchor">
@@ -229,12 +214,9 @@
 				<class>vehicle</class>
 				<readonly />
 			</linkcontrol>
-			<button_idelete name="idelete">
-				<anchored to="rightanchor">
-					<top />
-					<right anchor="left" offset="-5" />
-				</anchored>
-			</button_idelete>
+			<button_listitem_idelete name="idelete">
+				<editmode>sheet_iedit</editmode>
+			</button_listitem_idelete>
 
 			<string_textlistitem name="name">
 				<anchored to="rightanchor">
