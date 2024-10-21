@@ -59,8 +59,8 @@ function updateNpcHitPoints(nodeNPC)
 				sLine = sLine:gsub("</?%w>", ""):lower();
 				if StringManager.startsWith(sLine, "hit points:") then
 					if tryParseHitPointLine(sLine, nodeNPC, nodeCommander) then
-    					break;
-	    			end
+						break;
+					end
 				end
 			end
 		end

@@ -10,9 +10,9 @@
 		<script>
 			function onInit()
 				if KingdomsAndWarfare then
-					contents.subwindow.unitstitle.setVisible(true);
-					contents.subwindow.unitlist.setVisible(true);
-					contents.subwindow.unitlist_iadd.setVisible(not getDatabaseNode().isReadOnly());
+					content.subwindow.unitstitle.setVisible(true);
+					content.subwindow.unitlist.setVisible(true);
+					content.subwindow.unitlist_iadd.setVisible(not getDatabaseNode().isReadOnly());
 				end
 			end
 			function onDrop(x, y, draginfo)
