@@ -43,10 +43,10 @@ function getSave(rActor, sSave)
 	end
 
 	local nMod, bADV, bDIS, sAddText = getSaveOriginal(rActor, sSave);
-	if sNodeType ~= "pc" and FriendZone.isCohort(rActor) then
+	if sNodeType ~= "pc" and Pets.isCohort(rActor) then
 		local sSaves = DB.getValue(nodeActor, "savingthrows", "");
 		if sSaves:lower():match(sSave:sub(1,3):lower() .. "[^,]+%+ ?pb") or hasProfBonusTrait(nodeActor, "saving throw") then
-			local nodeCommander = FriendZone.getCommanderNode(rActor);
+			local nodeCommander = Pets.getCommanderNode(rActor);
 			local rCommander = ActorManager.resolveActor(nodeCommander);
 			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
 			nMod = nMod + nProfBonus;
@@ -63,9 +63,9 @@ function getCheck(rActor, sCheck, sSkill)
 	end
 
 	local nMod, bADV, bDIS, sAddText = getCheckOriginal(rActor, sCheck, sSkill);
-	if sNodeType ~= "pc" and FriendZone.isCohort(rActor) and (
+	if sNodeType ~= "pc" and Pets.isCohort(rActor) and (
 		hasProfBonusTrait(nodeActor, "ability check") or (sSkill and sSkill:lower():match(sSkill:sub(1,3):lower() .. "[^,]+%+ ?pb"))) then
-		local nodeCommander = FriendZone.getCommanderNode(rActor);
+		local nodeCommander = Pets.getCommanderNode(rActor);
 		local rCommander = ActorManager.resolveActor(nodeCommander);
 		local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
 		nMod = nMod + nProfBonus;
@@ -77,10 +77,10 @@ end
 function getDefenseValue(rAttacker, rDefender, rRoll)
 	local nDefenseVal, nAtkEffectsBonus, nDefEffectsBonus, bADV, bDIS = getDefenseValueOriginal(rAttacker, rDefender, rRoll);
 
-	if FriendZone.isCohort(rDefender) then
+	if Pets.isCohort(rDefender) then
 		local sAcText = DB.getValue(ActorManager.getCreatureNode(rDefender), "actext", "");
 		if sAcText:match("%+ ?PB") then
-			local nodeCommander = FriendZone.getCommanderNode(rDefender);
+			local nodeCommander = Pets.getCommanderNode(rDefender);
 			local rCommander = ActorManager.resolveActor(nodeCommander);
 			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
 			if nProfbonus == 0 then

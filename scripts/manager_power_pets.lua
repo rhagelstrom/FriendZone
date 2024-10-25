@@ -30,7 +30,7 @@ end
 
 function parseNPCPower(nodePower, bAllowSpellDataOverride)
 	local nodeNPC = nodePower.getChild("...");
-	if FriendZone.isCohort(nodeNPC) then
+	if Pets.isCohort(nodeNPC) then
 		nodeCohort = nodeNPC;
 	end
 	return parseNPCPowerOriginal(nodePower, bAllowSpellDataOverride)
@@ -53,7 +53,7 @@ function parsePower(tData)
 	local aMasterAbilities = parsePowerOriginal(tData)
 
 	if nodeCohort then
-		local nodeCommander = FriendZone.getCommanderNode(nodeCohort);
+		local nodeCommander = Pets.getCommanderNode(nodeCohort);
 
 		local nOffset = 0;
 		for _,rAbility in ipairs(aMasterAbilities) do

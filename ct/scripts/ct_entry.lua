@@ -8,7 +8,7 @@ end
 function onLinkChanged()
 	-- If a cohort NPC, then set up the links
 	local sClass, sRecord = link.getValue();
-	if FriendZone.isCohort(sRecord) then
+	if Pets.isCohort(sRecord) then
 		if sClass == "npc" or sClass == "vehicle" then
 			linkNPCOrVehicleFields();
 		end

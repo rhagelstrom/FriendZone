@@ -18,13 +18,13 @@ end
 
 function getNpcHitDice(nodeNPC)
 	local sHD = StringManager.trim(DB.getValue(nodeNPC, "hd", ""));
-	if sHD == "(see notes)" and FriendZone.isCohort(nodeNPC) then
+	if sHD == "(see notes)" and Pets.isCohort(nodeNPC) then
 		local sText = DB.getValue(nodeNPC, "text", "");
 		local aLines = StringManager.splitByPattern(sText, "<p>", true);
 		for _,sLine in ipairs(aLines) do
 			sLine = sLine:gsub("</?%w>", ""):lower();
 			if StringManager.startsWith(sLine, "hit dice:") then
-				local nodeCommander = FriendZone.getCommanderNode(nodeNPC);
+				local nodeCommander = Pets.getCommanderNode(nodeNPC);
 				local nHDMult, nHDSides;
 				if nodeCommander then
 					local sClass = sLine:match("([%w]+)%'?s? level");
@@ -50,8 +50,8 @@ end
 
 function updateNpcHitPoints(nodeNPC)
 	local sHD = StringManager.trim(DB.getValue(nodeNPC, "hd", ""));
-	if sHD == "(see notes)" and FriendZone.isCohort(nodeNPC) then
-		local nodeCommander = FriendZone.getCommanderNode(nodeNPC);
+	if sHD == "(see notes)" and Pets.isCohort(nodeNPC) then
+		local nodeCommander = Pets.getCommanderNode(nodeNPC);
 		if nodeCommander then
 			local sText = DB.getValue(nodeNPC, "text", "");
 			local aLines = StringManager.splitByPattern(sText, "<p>", true);
@@ -105,7 +105,7 @@ end
 
 function canHandleExtraHealthFields(nodeNPC)
 	if not canHandleExtraHealthFieldsOriginal(nodeNPC) then
-		return FriendZone.isCohort(nodeNPC);
+		return Pets.isCohort(nodeNPC);
 	end
 	return true;
 end

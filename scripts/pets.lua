@@ -41,7 +41,7 @@ function addCohort(nodeChar, nodeNPC)
 	end
 
 	DB.copyNode(nodeNPC, nodeNewCohort);
-	HpManagerFZ.updateNpcHitPoints(nodeNewCohort);
+	HpManagerPets.updateNpcHitPoints(nodeNewCohort);
 	DB.setValue(nodeNewCohort, "hptotal", "number", DB.getValue(nodeNewCohort, "hp", 0));
 end
 
@@ -105,5 +105,5 @@ function levelUpCohort(nodeCohort)
 	if HpManager then
 		HpManager.updateNpcHitDice(nodeCohort);
 	end
-	HpManagerFZ.updateNpcHitPoints(nodeCohort);
+	HpManagerPets.updateNpcHitPoints(nodeCohort);
 end

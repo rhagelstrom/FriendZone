@@ -3,7 +3,7 @@
 <!--
 MIT License
 
-Copyright (c) 2021 MeAndUnique
+Copyright (c) 2021-2024 MeAndUnique, Ryan Hagelstrom
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,15 +23,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Icons made by Freepik from www.flaticon.com
+Icons made by Freepik from game-icons.net
 
 -->
 
 <root release="3.0" version="3">
 	<properties>
-		<name>Feature: Friend Zone</name>
+		<name>Feature: Pets</name>
 		<version>dev_version</version>
-		<author>MeAndUnique</author>
+		<author>Ryan Hagelstrom</author>
 		<description>Adds support for companions of any sort.</description>
 		<loadorder>150</loadorder>
 		<ruleset>
@@ -40,12 +40,12 @@ Icons made by Freepik from www.flaticon.com
 	</properties>
 
 	<base>
-		<script name="ActionSkillFZ" file="scripts/manager_action_skill_fz.lua" />
-		<script name="ActorManagerFZ" file="scripts/manager_actor_fz.lua" />
-		<script name="CombatManagerFZ" file="scripts/manager_combat_fz.lua" />
-		<script name="FriendZone" file="scripts/friendzone.lua" />
-		<script name="HpManagerFZ" file="scripts/manager_hp_fz.lua" />
-		<script name="PowerManagerFZ" file="scripts/manager_power_fz.lua" />
+		<script name="ActionSkillPets" file="scripts/manager_action_skill_pets.lua" />
+		<script name="ActorManagerPets" file="scripts/manager_actor_pets.lua" />
+		<script name="CombatManagerPets" file="scripts/manager_combat_pets.lua" />
+		<script name="Pets" file="scripts/pets.lua" />
+		<script name="HpManagerPets" file="scripts/manager_hp_pets.lua" />
+		<script name="PowerManagerPets" file="scripts/manager_power_pets.lua" />
 
 		<includefile source="campaign/record_char.xml" />
 		<includefile source="campaign/record_char_notes_and_logs.xml" />
@@ -54,19 +54,18 @@ Icons made by Freepik from www.flaticon.com
 		<includefile source="ct/ct_host.xml" />
 
 		<includefile source="strings/strings.xml" />
-		<includefile source="graphics/graphics_icons.xml" />
 
-		<icon name="FriendZone_icon" file="graphics/icons/FriendZone.png" />
+		<icon name="Pets_icon" file="graphics/icons/pets.webp" />
 
-		<script name="PowerUpFZ">
+		<script name="PowerUpPets">
 			function onInit()
 				if PowerUp then
-					PowerUp.registerExtension("Friend Zone", "dev_version");
+					PowerUp.registerExtension("Pets", "dev_version");
 				end
 			end
 		</script>
 	</base>
 
-	<announcement text="Friend Zone dev_version by MeAndUnique." icon="FriendZone_icon" font="emotefont" />
+	<announcement text="Pets dev_version by MeAndUnique, rhagelstrom, Farratto" icon="Pets_icon" font="emotefont" />
 
 </root>

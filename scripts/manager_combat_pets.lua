@@ -52,7 +52,7 @@ function centerOnToken(nodeEntry, bOpen)
 	centerOnTokenOriginal(nodeEntry, bOpen);
 
 	if not Session.IsHost and
-	FriendZone.isCohort(nodeEntry) and
+	Pets.isCohort(nodeEntry) and
 	DB.isOwner(ActorManager.getCreatureNode(nodeEntry)) then
 		ImageManager.centerOnToken(CombatManager.getTokenFromCT(nodeEntry), bOpen);
 	end
@@ -74,10 +74,10 @@ function addUnit(tCustom)
 end
 
 function trySetCohortLinkAndFaction(tCustom)
-	local bIsCohort = FriendZone.isCohort(tCustom.nodeRecord);
+	local bIsCohort = Pets.isCohort(tCustom.nodeRecord);
 	if tCustom.nodeCT and bIsCohort then
 		local sClass = tCustom.sClass or LibraryData.getRecordDisplayClass(tCustom.sRecordType);
-		local nodeCommander = FriendZone.getCommanderNode(tCustom.nodeRecord);
+		local nodeCommander = Pets.getCommanderNode(tCustom.nodeRecord);
 		local sFaction = ActorManager.getFaction(nodeCommander);
 		DB.setValue(tCustom.nodeCT, "link", "windowreference", sClass, tCustom.nodeRecord.getPath());
 		DB.setValue(tCustom.nodeCT, "friendfoe", "string", sFaction);
