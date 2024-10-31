@@ -2,6 +2,9 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals Pets CombatManagerKw
+-- luacheck: globals showTurnMessage centerOnToken onNPCPostAdd onVehiclePostAdd
+-- luacheck: globals trySetCohortLinkAndFaction addUnit
 
 local showTurnMessageOriginal;
 local centerOnTokenOriginal;

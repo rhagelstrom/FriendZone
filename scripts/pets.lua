@@ -2,6 +2,9 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals AssistantGMManager HpManagerPets HpManager
+-- luacheck: globals notifyAddHolderOwnership onLevelChanged levelUpCohort addCohort
+-- luacheck: globals getCommanderNode addUnit addVehicle isCohort
 
 local notifyAddHolderOwnershipOriginal;
 

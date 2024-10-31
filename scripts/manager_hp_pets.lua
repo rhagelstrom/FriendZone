@@ -2,6 +2,9 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals Pets HpManager
+-- luacheck: globals getNpcHitDice canHandleExtraHealthFields updateNpcHitPoints
+-- luacheck: globals tryParseHitPointLine
 
 local getNpcHitDiceOriginal;
 local canHandleExtraHealthFieldsOriginal;

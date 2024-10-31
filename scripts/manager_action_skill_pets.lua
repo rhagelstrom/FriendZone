@@ -2,6 +2,7 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals performNPCRoll setCommanderProfBonus
 
 local performNPCRollOriginal;
 

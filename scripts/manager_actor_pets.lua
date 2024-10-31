@@ -2,6 +2,9 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals Pets StringManager
+-- luacheck: globals getActorRecordTypeFromPath getSave getCheck getDefenseValue
+-- luacheck: globals hasProfBonusTrait
 
 local getActorRecordTypeFromPathOriginal;
 local getSaveOriginal;
@@ -83,7 +86,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 			local nodeCommander = Pets.getCommanderNode(rDefender);
 			local rCommander = ActorManager.resolveActor(nodeCommander);
 			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
-			if nProfbonus == 0 then
+			if nProfBonus == 0 then
 				local sCR = DB.getValue(nodeCommander, "cr");
 				if StringManager.isNumber(sCR) then
 					nProfBonus = math.max(2, math.floor((tonumber(sCR) - 1) / 4) + 2);

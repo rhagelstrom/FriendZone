@@ -2,6 +2,17 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals _ Pets
+-- luacheck: globals parseNPCPower parsePower encodeNumericAddition encodeDiceAddition
+-- luacheck: globals encodeNumericReplacement encodeAttackModifierReplacement
+-- luacheck: globals encodeExtraDamage encodeDcPlayerReplacement
+-- luacheck: globals encodeNumericMultiplication encodeDiceMultiplication
+-- luacheck: globals encodeNumericLevelMultiplication postProcessAttack
+-- luacheck: globals postProcessDamageAndHeal postProcessSave postProcessEffect
+-- luacheck: globals calculateEncoding decodeMetadata findCommanderPowerGroup
+-- luacheck: globals calculateCommanderGroupAttackModifier parseGroupAndClass
+-- luacheck: globals calculateCommanderGroupSaveDc commanderHasClass
+-- luacheck: globals calculateCommanderGroupSaveDc
 
 local parseNPCPowerOriginal;
 local parsePowerOriginal;
@@ -167,9 +178,9 @@ function postProcessAttack(rAttack, nodeCommander)
 		return 0;
 	end
 
-	local nType = 0;
-	local nIndex = 0;
-	local nOffset = 0;
+	local nType;
+	local nIndex;
+	local nOffset;
 	nType, nIndex, nOffset, rAttack.modifier = decodeMetadata(rAttack.modifier);
 
 	if nType == ADD_PROFICIENCY_ENCODING then
@@ -188,14 +199,14 @@ function postProcessAttack(rAttack, nodeCommander)
 end
 
 function postProcessDamageAndHeal(rDamage, nodeCommander)
-	local nType = 0;
-	local nIndex = 0;
-	local nOffset = 0;
+	local nType;
+	local nIndex;
+	local nOffset;
 	local rCommander = ActorManager.resolveActor(nodeCommander);
 	local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
 	for _, rClause in ipairs(rDamage.clauses) do
 		if rClause.modifier then
-			local nClauseOffset = 0;
+			local nClauseOffset;
 			nType, nIndex, nClauseOffset, rClause.modifier = decodeMetadata(rClause.modifier);
 			nOffset = nOffset + nClauseOffset;
 
@@ -205,7 +216,7 @@ function postProcessDamageAndHeal(rDamage, nodeCommander)
 					rClause.modifier = rClause.modifier * nProfBonus;
 			elseif nType == DICE_PROFICIENCY_ENCODING then
 				rClause.dice = {};
-				for nCount=1,nProfBonus do
+				for _=1,nProfBonus do
 					table.insert(rClause.dice, "d" .. rClause.modifier);
 				end
 				rClause.modifier = 0;
@@ -229,10 +240,10 @@ function postProcessSave(rSave, nodeCommander)
 		return 0;
 	end
 
-	local nType = 0;
-	local nIndex = 0;
-	local nOffset = 0;
-	nType, nIndex, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
+	local nType;
+	local nOffset;
+
+	nType, _, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
 
 	if nType == ADD_PROFICIENCY_ENCODING then
 		-- Support for Superior Ferocity
@@ -259,8 +270,8 @@ function postProcessEffect(rEffect, nodeCommander)
 	local nOffset = 0;
 	local sEncodedDamage = rEffect.sName:match("DMG: ?(" .. string.rep("%d", ENCODING_LENGTH) .. ")");
 	if sEncodedDamage then
-		local nType, nIndex, nValue;
-		nType, nIndex, nOffset, nValue = decodeMetadata(tonumber(sEncodedDamage));
+		local nType, nValue;
+		nType, _, nOffset, nValue = decodeMetadata(tonumber(sEncodedDamage));
 		if nType == ADD_PROFICIENCY_ENCODING then
 			local rCommander = ActorManager.resolveActor(nodeCommander);
 			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
@@ -353,7 +364,6 @@ function commanderHasClass(nodeCommander, sClass)
 end
 
 function calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander)
-	local rCommander = ActorManager.resolveActor(nodeCommander);
 	local sSaveDCStat = DB.getValue(nodePowerGroup, "savestat", "");
 	if sSaveDCStat == "" then
 		sSaveDCStat = DB.getValue(nodePowerGroup, "stat", "");
@@ -370,7 +380,6 @@ function calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander)
 end
 
 function calculateCommanderGroupAttackModifier(nodePowerGroup, nodeCommander)
-	local rCommander ActorManager.resolveActor(nodeCommander);
 	local sAttackStat = DB.getValue(nodePowerGroup, "atkstat", "");
 	if sAttackStat == "" then
 		sAttackStat = DB.getValue(nodePowerGroup, "stat", "");

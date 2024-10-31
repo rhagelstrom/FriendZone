@@ -2,6 +2,8 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
+-- luacheck: globals Pets ActionSkillPets
+-- luacheck: globals getSelectionPosition  getValue getCursorPosition
 
 local actionOriginal;
 
