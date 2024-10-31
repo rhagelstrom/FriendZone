@@ -13,7 +13,6 @@
 -- luacheck: globals calculateCommanderGroupAttackModifier parseGroupAndClass
 -- luacheck: globals calculateCommanderGroupSaveDc commanderHasClass
 -- luacheck: globals calculateCommanderGroupSaveDc
-
 local parseNPCPowerOriginal;
 local parsePowerOriginal;
 
@@ -32,365 +31,365 @@ local MULTIPLY_LEVEL_ENCODING = 5;
 local aStoredNames = {};
 
 function onInit()
-	parseNPCPowerOriginal = PowerManager.parseNPCPower;
-	PowerManager.parseNPCPower = parseNPCPower;
+    parseNPCPowerOriginal = PowerManager.parseNPCPower;
+    PowerManager.parseNPCPower = parseNPCPower;
 
-	parsePowerOriginal = PowerManager.parsePower;
-	PowerManager.parsePower = parsePower;
+    parsePowerOriginal = PowerManager.parsePower;
+    PowerManager.parsePower = parsePower;
 end
 
 function parseNPCPower(nodePower, bAllowSpellDataOverride)
-	local nodeNPC = nodePower.getChild("...");
-	if Pets.isCohort(nodeNPC) then
-		nodeCohort = nodeNPC;
-	end
-	return parseNPCPowerOriginal(nodePower, bAllowSpellDataOverride)
+    local nodeNPC = nodePower.getChild('...');
+    if Pets.isCohort(nodeNPC) then
+        nodeCohort = nodeNPC;
+    end
+    return parseNPCPowerOriginal(nodePower, bAllowSpellDataOverride)
 end
 
 function parsePower(tData)
-	if nodeCohort then
-		tData.sDesc = tData.sDesc:gsub("[%+%-]%d+ %+ ?PB", encodeNumericAddition);
-		tData.sDesc = tData.sDesc:gsub("%d+d%d+ %+ ?PB", encodeDiceAddition);
-		tData.sDesc = tData.sDesc:gsub("a DC %d+ [p%+]l?u?s? ?PB", encodeNumericReplacement);
-		tData.sDesc = tData.sDesc:gsub("DC Players?", encodeDcPlayerReplacement);
-		tData.sDesc = tData.sDesc:gsub("your .+ attack modifier", encodeAttackModifierReplacement);
-		tData.sDesc = tData.sDesc:gsub("extra PB ?%w* damage", encodeExtraDamage);
-		tData.sDesc = tData.sDesc:gsub("takes PB ?%w* damage", encodeExtraDamage);
-		tData.sDesc = tData.sDesc:gsub("[dgt][ea][aik][lne]s? %d+ times PB", encodeNumericMultiplication);
-		tData.sDesc = tData.sDesc:gsub("PBd%d+", encodeDiceMultiplication);
-		tData.sDesc = tData.sDesc:gsub("equal to %d+ times the %w+%'?s? level", encodeNumericLevelMultiplication);
-	end
+    if nodeCohort then
+        tData.sDesc = tData.sDesc:gsub('[%+%-]%d+ %+ ?PB', encodeNumericAddition);
+        tData.sDesc = tData.sDesc:gsub('%d+d%d+ %+ ?PB', encodeDiceAddition);
+        tData.sDesc = tData.sDesc:gsub('a DC %d+ [p%+]l?u?s? ?PB', encodeNumericReplacement);
+        tData.sDesc = tData.sDesc:gsub('DC Players?', encodeDcPlayerReplacement);
+        tData.sDesc = tData.sDesc:gsub('your .+ attack modifier', encodeAttackModifierReplacement);
+        tData.sDesc = tData.sDesc:gsub('extra PB ?%w* damage', encodeExtraDamage);
+        tData.sDesc = tData.sDesc:gsub('takes PB ?%w* damage', encodeExtraDamage);
+        tData.sDesc = tData.sDesc:gsub('[dgt][ea][aik][lne]s? %d+ times PB', encodeNumericMultiplication);
+        tData.sDesc = tData.sDesc:gsub('PBd%d+', encodeDiceMultiplication);
+        tData.sDesc = tData.sDesc:gsub('equal to %d+ times the %w+%\'?s? level', encodeNumericLevelMultiplication);
+    end
 
-	local aMasterAbilities = parsePowerOriginal(tData)
+    local aMasterAbilities = parsePowerOriginal(tData)
 
-	if nodeCohort then
-		local nodeCommander = Pets.getCommanderNode(nodeCohort);
+    if nodeCohort then
+        local nodeCommander = Pets.getCommanderNode(nodeCohort);
 
-		local nOffset = 0;
-		for _,rAbility in ipairs(aMasterAbilities) do
-			rAbility.startpos = rAbility.startpos + nOffset;
+        local nOffset = 0;
+        for _, rAbility in ipairs(aMasterAbilities) do
+            rAbility.startpos = rAbility.startpos + nOffset;
 
-			if rAbility.type == "attack" then
-				nOffset = nOffset + postProcessAttack(rAbility, nodeCommander);
-			elseif rAbility.type == "damage" or  rAbility.type == "heal" then
-				nOffset = nOffset + postProcessDamageAndHeal(rAbility, nodeCommander);
-			elseif rAbility.type == "powersave" then
-				nOffset = nOffset + postProcessSave(rAbility, nodeCommander);
-			elseif rAbility.type == "effect" then
-				nOffset = nOffset + postProcessEffect(rAbility, nodeCommander);
-			end
+            if rAbility.type == 'attack' then
+                nOffset = nOffset + postProcessAttack(rAbility, nodeCommander);
+            elseif rAbility.type == 'damage' or rAbility.type == 'heal' then
+                nOffset = nOffset + postProcessDamageAndHeal(rAbility, nodeCommander);
+            elseif rAbility.type == 'powersave' then
+                nOffset = nOffset + postProcessSave(rAbility, nodeCommander);
+            elseif rAbility.type == 'effect' then
+                nOffset = nOffset + postProcessEffect(rAbility, nodeCommander);
+            end
 
-			rAbility.endpos = rAbility.endpos + nOffset;
-		end
+            rAbility.endpos = rAbility.endpos + nOffset;
+        end
 
-		nodeCohort = nil;
-		aStoredNames = {};
-	end
+        nodeCohort = nil;
+        aStoredNames = {};
+    end
 
-	return aMasterAbilities;
+    return aMasterAbilities;
 end
 
 function encodeNumericAddition(sMatch)
-	local nMod = tonumber(sMatch:match("^[%+%-]%d+"));
-	local bNegative = nMod < 0;
-	if bNegative then
-		nMod = -nMod;
-	end
-	local nLengthDiff = sMatch:len() - (1 + ENCODING_LENGTH);
-	nMod = nMod + calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
-	local sPrefix = "+";
-	if bNegative then
-		sPrefix = "-";
-	end
-	return sPrefix .. nMod;
+    local nMod = tonumber(sMatch:match('^[%+%-]%d+'));
+    local bNegative = nMod < 0;
+    if bNegative then
+        nMod = -nMod;
+    end
+    local nLengthDiff = sMatch:len() - (1 + ENCODING_LENGTH);
+    nMod = nMod + calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
+    local sPrefix = '+';
+    if bNegative then
+        sPrefix = '-';
+    end
+    return sPrefix .. nMod;
 end
 
 function encodeDiceAddition(sMatch)
-	local sDice = sMatch:match("^%d+d%d+");
-	local nProfBonusStringLength = sMatch:len() - sDice:len() - 1;
-	local nLengthDiff = nProfBonusStringLength - (1 + ENCODING_LENGTH);
-	local nMod = calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
-	return sDice .. " +" .. nMod;
+    local sDice = sMatch:match('^%d+d%d+');
+    local nProfBonusStringLength = sMatch:len() - sDice:len() - 1;
+    local nLengthDiff = nProfBonusStringLength - (1 + ENCODING_LENGTH);
+    local nMod = calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
+    return sDice .. ' +' .. nMod;
 end
 
 function encodeNumericReplacement(sMatch)
-	local nMod = tonumber(sMatch:match("^a DC (%d+)"));
-	local nLengthDiff = sMatch:len() - 5 - ENCODING_LENGTH;
-	nMod = nMod + calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
-	return "a DC " .. nMod;
+    local nMod = tonumber(sMatch:match('^a DC (%d+)'));
+    local nLengthDiff = sMatch:len() - 5 - ENCODING_LENGTH;
+    nMod = nMod + calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, nLengthDiff);
+    return 'a DC ' .. nMod;
 end
 
 function encodeDcPlayerReplacement(sMatch)
-	local nLengthDiff = sMatch:len() - 3 - ENCODING_LENGTH;
-	return "DC " .. calculateEncoding(COMMANDER_GROUP_ENCODING, 0, nLengthDiff);
+    local nLengthDiff = sMatch:len() - 3 - ENCODING_LENGTH;
+    return 'DC ' .. calculateEncoding(COMMANDER_GROUP_ENCODING, 0, nLengthDiff);
 end
 
 function encodeAttackModifierReplacement(sMatch)
-	local sGroup = sMatch:lower():match("your (.+) attack");
-	table.insert(aStoredNames, sGroup);
-	local nIndex = #aStoredNames;
-	local nLengthDiff = sMatch:len() - 1 - ENCODING_LENGTH;
-	local nMod = calculateEncoding(COMMANDER_GROUP_ENCODING, nIndex, nLengthDiff);
-	return "+" .. nMod;
+    local sGroup = sMatch:lower():match('your (.+) attack');
+    table.insert(aStoredNames, sGroup);
+    local nIndex = #aStoredNames;
+    local nLengthDiff = sMatch:len() - 1 - ENCODING_LENGTH;
+    local nMod = calculateEncoding(COMMANDER_GROUP_ENCODING, nIndex, nLengthDiff);
+    return '+' .. nMod;
 end
 
 function encodeExtraDamage(sMatch)
-	return sMatch:gsub("PB", tostring(calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, 2 - ENCODING_LENGTH)));
+    return sMatch:gsub('PB', tostring(calculateEncoding(ADD_PROFICIENCY_ENCODING, 0, 2 - ENCODING_LENGTH)));
 end
 
 function encodeNumericMultiplication(sMatch)
-	local sWord, sMod = sMatch:match("^(%w+) (%d+)");
-	local nMod = tonumber(sMod);
-	local nLengthDiff = sMatch:len() - ENCODING_LENGTH;
-	nMod = nMod + calculateEncoding(MULTIPLY_PROFICIENCY_ENCODING, 0, nLengthDiff)
-	return sWord .. " " .. nMod;
+    local sWord, sMod = sMatch:match('^(%w+) (%d+)');
+    local nMod = tonumber(sMod);
+    local nLengthDiff = sMatch:len() - ENCODING_LENGTH;
+    nMod = nMod + calculateEncoding(MULTIPLY_PROFICIENCY_ENCODING, 0, nLengthDiff)
+    return sWord .. ' ' .. nMod;
 end
 
 function encodeDiceMultiplication(sMatch)
-	local nMod = tonumber(sMatch:match("%d+$"));
-	local nLengthDiff = sMatch:len() - ENCODING_LENGTH;
-	nMod = nMod + calculateEncoding(DICE_PROFICIENCY_ENCODING, 0, nLengthDiff);
-	return tostring(nMod);
+    local nMod = tonumber(sMatch:match('%d+$'));
+    local nLengthDiff = sMatch:len() - ENCODING_LENGTH;
+    nMod = nMod + calculateEncoding(DICE_PROFICIENCY_ENCODING, 0, nLengthDiff);
+    return tostring(nMod);
 end
 
 function encodeNumericLevelMultiplication(sMatch)
-	local sMod, sClass = sMatch:lower():match("(%d+) times the (%w+)");
-	local nMod = tonumber(sMod);
-	local nLengthDiff = sMatch:len() - 9 - ENCODING_LENGTH;
+    local sMod, sClass = sMatch:lower():match('(%d+) times the (%w+)');
+    local nMod = tonumber(sMod);
+    local nLengthDiff = sMatch:len() - 9 - ENCODING_LENGTH;
 
-	table.insert(aStoredNames, sClass);
-	local nIndex = #aStoredNames;
+    table.insert(aStoredNames, sClass);
+    local nIndex = #aStoredNames;
 
-	nMod = nMod + calculateEncoding(MULTIPLY_LEVEL_ENCODING, nIndex, nLengthDiff);
+    nMod = nMod + calculateEncoding(MULTIPLY_LEVEL_ENCODING, nIndex, nLengthDiff);
 
-	return "equal to " .. nMod;
+    return 'equal to ' .. nMod;
 end
 
 function calculateEncoding(nType, nIndex, nOffset)
-	if nOffset < 0 then
-		nIndex = nIndex + 1; -- increment since negative offsets will subtract
-	end
-	return (nType * ENCODING_TYPE_BASE) + (nIndex * ENCODING_INDEX_BASE) + (nOffset * ENCODING_OFFSET_BASE);
+    if nOffset < 0 then
+        nIndex = nIndex + 1; -- increment since negative offsets will subtract
+    end
+    return (nType * ENCODING_TYPE_BASE) + (nIndex * ENCODING_INDEX_BASE) + (nOffset * ENCODING_OFFSET_BASE);
 end
 
 function postProcessAttack(rAttack, nodeCommander)
-	if not rAttack.modifier then
-		return 0;
-	end
+    if not rAttack.modifier then
+        return 0;
+    end
 
-	local nType;
-	local nIndex;
-	local nOffset;
-	nType, nIndex, nOffset, rAttack.modifier = decodeMetadata(rAttack.modifier);
+    local nType;
+    local nIndex;
+    local nOffset;
+    nType, nIndex, nOffset, rAttack.modifier = decodeMetadata(rAttack.modifier);
 
-	if nType == ADD_PROFICIENCY_ENCODING then
-		local rCommander = ActorManager.resolveActor(nodeCommander);
-		local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
-		rAttack.modifier = rAttack.modifier + nProfBonus;
-	elseif nType == COMMANDER_GROUP_ENCODING then
-		local sGroup = aStoredNames[nIndex];
-		local nodePowerGroup = findCommanderPowerGroup(nodeCommander, sGroup);
-		if nodePowerGroup then
-			rAttack.modifier = calculateCommanderGroupAttackModifier(nodePowerGroup, nodeCommander);
-		end
-	end
+    if nType == ADD_PROFICIENCY_ENCODING then
+        local rCommander = ActorManager.resolveActor(nodeCommander);
+        local nProfBonus = ActorManager5E.getAbilityScore(rCommander, 'prf');
+        rAttack.modifier = rAttack.modifier + nProfBonus;
+    elseif nType == COMMANDER_GROUP_ENCODING then
+        local sGroup = aStoredNames[nIndex];
+        local nodePowerGroup = findCommanderPowerGroup(nodeCommander, sGroup);
+        if nodePowerGroup then
+            rAttack.modifier = calculateCommanderGroupAttackModifier(nodePowerGroup, nodeCommander);
+        end
+    end
 
-	return nOffset;
+    return nOffset;
 end
 
 function postProcessDamageAndHeal(rDamage, nodeCommander)
-	local nType;
-	local nIndex;
-	local nOffset;
-	local rCommander = ActorManager.resolveActor(nodeCommander);
-	local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
-	for _, rClause in ipairs(rDamage.clauses) do
-		if rClause.modifier then
-			local nClauseOffset;
-			nType, nIndex, nClauseOffset, rClause.modifier = decodeMetadata(rClause.modifier);
-			nOffset = nOffset + nClauseOffset;
+    local nType;
+    local nIndex;
+    local nOffset;
+    local rCommander = ActorManager.resolveActor(nodeCommander);
+    local nProfBonus = ActorManager5E.getAbilityScore(rCommander, 'prf');
+    for _, rClause in ipairs(rDamage.clauses) do
+        if rClause.modifier then
+            local nClauseOffset;
+            nType, nIndex, nClauseOffset, rClause.modifier = decodeMetadata(rClause.modifier);
+            nOffset = nOffset + nClauseOffset;
 
-			if nType == ADD_PROFICIENCY_ENCODING then
-				rClause.modifier = rClause.modifier + nProfBonus;
-			elseif nType == MULTIPLY_PROFICIENCY_ENCODING then
-					rClause.modifier = rClause.modifier * nProfBonus;
-			elseif nType == DICE_PROFICIENCY_ENCODING then
-				rClause.dice = {};
-				for _=1,nProfBonus do
-					table.insert(rClause.dice, "d" .. rClause.modifier);
-				end
-				rClause.modifier = 0;
-			elseif nType == MULTIPLY_LEVEL_ENCODING then
-				local sClass = aStoredNames[nIndex];
-				local nLevels;
-				if StringManager.contains(DataCommon.classes, sClass) then
-					nLevels = ActorManager5E.getClassLevel(nodeCommander, sClass);
-				else
-					nLevels = DB.getValue(nodeCommander, "level", 0);
-				end
-				rClause.modifier = rClause.modifier * nLevels;
-			end
-		end
-	end
-	return nOffset
+            if nType == ADD_PROFICIENCY_ENCODING then
+                rClause.modifier = rClause.modifier + nProfBonus;
+            elseif nType == MULTIPLY_PROFICIENCY_ENCODING then
+                rClause.modifier = rClause.modifier * nProfBonus;
+            elseif nType == DICE_PROFICIENCY_ENCODING then
+                rClause.dice = {};
+                for _ = 1, nProfBonus do
+                    table.insert(rClause.dice, 'd' .. rClause.modifier);
+                end
+                rClause.modifier = 0;
+            elseif nType == MULTIPLY_LEVEL_ENCODING then
+                local sClass = aStoredNames[nIndex];
+                local nLevels;
+                if StringManager.contains(DataCommon.classes, sClass) then
+                    nLevels = ActorManager5E.getClassLevel(nodeCommander, sClass);
+                else
+                    nLevels = DB.getValue(nodeCommander, 'level', 0);
+                end
+                rClause.modifier = rClause.modifier * nLevels;
+            end
+        end
+    end
+    return nOffset
 end
 
 function postProcessSave(rSave, nodeCommander)
-	if not rSave.savemod then
-		return 0;
-	end
+    if not rSave.savemod then
+        return 0;
+    end
 
-	local nType;
-	local nOffset;
+    local nType;
+    local nOffset;
 
-	nType, _, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
+    nType, _, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
 
-	if nType == ADD_PROFICIENCY_ENCODING then
-		-- Support for Superior Ferocity
-		local nodePowerGroup = findCommanderPowerGroup(nodeCommander);
-		if nodePowerGroup then
-			rSave.savemod = calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander);
-		else
-			local rCommander = ActorManager.resolveActor(nodeCommander);
-			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
-			rSave.savemod = rSave.savemod + nProfBonus;
-		end
-	elseif nType == COMMANDER_GROUP_ENCODING then
-		-- Tasha's templates typcially don't give either a class or a group, so Spell DC is assumed.
-		local nodePowerGroup = findCommanderPowerGroup(nodeCommander, "spell");
-		if nodePowerGroup then
-			rSave.savemod = calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander);
-		end
-	end
+    if nType == ADD_PROFICIENCY_ENCODING then
+        -- Support for Superior Ferocity
+        local nodePowerGroup = findCommanderPowerGroup(nodeCommander);
+        if nodePowerGroup then
+            rSave.savemod = calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander);
+        else
+            local rCommander = ActorManager.resolveActor(nodeCommander);
+            local nProfBonus = ActorManager5E.getAbilityScore(rCommander, 'prf');
+            rSave.savemod = rSave.savemod + nProfBonus;
+        end
+    elseif nType == COMMANDER_GROUP_ENCODING then
+        -- Tasha's templates typcially don't give either a class or a group, so Spell DC is assumed.
+        local nodePowerGroup = findCommanderPowerGroup(nodeCommander, 'spell');
+        if nodePowerGroup then
+            rSave.savemod = calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander);
+        end
+    end
 
-	return nOffset;
+    return nOffset;
 end
 
 function postProcessEffect(rEffect, nodeCommander)
-	local nOffset = 0;
-	local sEncodedDamage = rEffect.sName:match("DMG: ?(" .. string.rep("%d", ENCODING_LENGTH) .. ")");
-	if sEncodedDamage then
-		local nType, nValue;
-		nType, _, nOffset, nValue = decodeMetadata(tonumber(sEncodedDamage));
-		if nType == ADD_PROFICIENCY_ENCODING then
-			local rCommander = ActorManager.resolveActor(nodeCommander);
-			local nProfBonus = ActorManager5E.getAbilityScore(rCommander, "prf");
-			rEffect.sName = rEffect.sName:gsub(sEncodedDamage, tostring(nValue + nProfBonus));
-		end
-	end
-	return nOffset;
+    local nOffset = 0;
+    local sEncodedDamage = rEffect.sName:match('DMG: ?(' .. string.rep('%d', ENCODING_LENGTH) .. ')');
+    if sEncodedDamage then
+        local nType, nValue;
+        nType, _, nOffset, nValue = decodeMetadata(tonumber(sEncodedDamage));
+        if nType == ADD_PROFICIENCY_ENCODING then
+            local rCommander = ActorManager.resolveActor(nodeCommander);
+            local nProfBonus = ActorManager5E.getAbilityScore(rCommander, 'prf');
+            rEffect.sName = rEffect.sName:gsub(sEncodedDamage, tostring(nValue + nProfBonus));
+        end
+    end
+    return nOffset;
 end
 
 function decodeMetadata(nValue)
-	local nIndex = 0;
-	local nType = 0;
-	local nOffset = 0;
-	local bNegative = false;
-	local nEncoding = nValue;
-	if nEncoding <= -ENCODING_TYPE_BASE then
-		bNegative = true;
-		nEncoding = -nEncoding;
-	end
-	if nEncoding >= ENCODING_TYPE_BASE then
-		nType = math.floor(nEncoding / ENCODING_TYPE_BASE);
-		nEncoding = nEncoding - (nType * ENCODING_TYPE_BASE);
+    local nIndex = 0;
+    local nType = 0;
+    local nOffset = 0;
+    local bNegative = false;
+    local nEncoding = nValue;
+    if nEncoding <= -ENCODING_TYPE_BASE then
+        bNegative = true;
+        nEncoding = -nEncoding;
+    end
+    if nEncoding >= ENCODING_TYPE_BASE then
+        nType = math.floor(nEncoding / ENCODING_TYPE_BASE);
+        nEncoding = nEncoding - (nType * ENCODING_TYPE_BASE);
 
-		nIndex = math.floor(nEncoding / ENCODING_INDEX_BASE);
-		nEncoding = nEncoding - (nIndex * ENCODING_INDEX_BASE)
+        nIndex = math.floor(nEncoding / ENCODING_INDEX_BASE);
+        nEncoding = nEncoding - (nIndex * ENCODING_INDEX_BASE)
 
-		nOffset = math.floor(nEncoding / ENCODING_OFFSET_BASE);
-		if nOffset > (ENCODING_OFFSET_BASE / 2) then
-			nOffset = nOffset - ENCODING_OFFSET_BASE;
-		end
+        nOffset = math.floor(nEncoding / ENCODING_OFFSET_BASE);
+        if nOffset > (ENCODING_OFFSET_BASE / 2) then
+            nOffset = nOffset - ENCODING_OFFSET_BASE;
+        end
 
-		nValue = nEncoding % ENCODING_OFFSET_BASE;
-		if bNegative then
-			nValue = -nValue;
-		end
-	end
-	return nType, nIndex, nOffset, nValue;
+        nValue = nEncoding % ENCODING_OFFSET_BASE;
+        if bNegative then
+            nValue = -nValue;
+        end
+    end
+    return nType, nIndex, nOffset, nValue;
 end
 
 function findCommanderPowerGroup(nodeCommander, sGroup)
-	local sClass;
-	if not sGroup then
-		sClass, sGroup = parseGroupAndClass();
-	end
+    local sClass;
+    if not sGroup then
+        sClass, sGroup = parseGroupAndClass();
+    end
 
-	if sGroup then
-		if sClass and not commanderHasClass(nodeCommander, sClass) then
-			return nil;
-		end
+    if sGroup then
+        if sClass and not commanderHasClass(nodeCommander, sClass) then
+            return nil;
+        end
 
-		local nodeMatch = nil;
-		for _,nodeGroup in pairs(DB.getChildren(nodeCommander, "powergroup")) do
-			local sName = DB.getValue(nodeGroup, "name", ""):lower();
-			if sClass and sName:match("^" .. sGroup .. "s? %(" .. sClass .. "%)$") then
-				-- No need to continue searching after a specific match.
-				return nodeGroup;
-			elseif sName:match("^" .. sGroup .. "s?$") then
-				-- Hold on to a generic match and keep searching.
-				nodeMatch = nodeGroup;
-			end
-		end
-		return nodeMatch;
-	end
+        local nodeMatch = nil;
+        for _, nodeGroup in pairs(DB.getChildren(nodeCommander, 'powergroup')) do
+            local sName = DB.getValue(nodeGroup, 'name', ''):lower();
+            if sClass and sName:match('^' .. sGroup .. 's? %(' .. sClass .. '%)$') then
+                -- No need to continue searching after a specific match.
+                return nodeGroup;
+            elseif sName:match('^' .. sGroup .. 's?$') then
+                -- Hold on to a generic match and keep searching.
+                nodeMatch = nodeGroup;
+            end
+        end
+        return nodeMatch;
+    end
 end
 
 function parseGroupAndClass()
-	local sText = DB.getValue(nodeCohort, "text", "");
-	local aLines = StringManager.splitByPattern(sText, "<p>", true);
-	local sClass, sGroup;
-	for _,sLine in ipairs(aLines) do
-		sLine = sLine:gsub("</?%w>", ""):lower();
-		if StringManager.startsWith(sLine, "saving throw dcs:") then
-			sClass, sGroup = sLine:lower():match("replace the dc with the (%w+)%'?s? (.+) save dc");
-		elseif StringManager.startsWith(sLine, "features:") then
-			sClass, sGroup = sLine:lower():match("to reflect the (%w+)%'?s? (.+) save dc");
-		elseif StringManager.startsWith(sLine, "actions:") then
-			sClass, sGroup = sLine:lower():match("with the (%w+)%'?s? actual (.+) attack modifier");
-		end
-	end
-	return sClass, sGroup;
+    local sText = DB.getValue(nodeCohort, 'text', '');
+    local aLines = StringManager.splitByPattern(sText, '<p>', true);
+    local sClass, sGroup;
+    for _, sLine in ipairs(aLines) do
+        sLine = sLine:gsub('</?%w>', ''):lower();
+        if StringManager.startsWith(sLine, 'saving throw dcs:') then
+            sClass, sGroup = sLine:lower():match('replace the dc with the (%w+)%\'?s? (.+) save dc');
+        elseif StringManager.startsWith(sLine, 'features:') then
+            sClass, sGroup = sLine:lower():match('to reflect the (%w+)%\'?s? (.+) save dc');
+        elseif StringManager.startsWith(sLine, 'actions:') then
+            sClass, sGroup = sLine:lower():match('with the (%w+)%\'?s? actual (.+) attack modifier');
+        end
+    end
+    return sClass, sGroup;
 end
 
 function commanderHasClass(nodeCommander, sClass)
-	for _,nodeClass in pairs(DB.getChildren(nodeCommander, "classes")) do
-		if DB.getValue(nodeClass, "name", ""):lower() == sClass then
-			return true;
-		end
-	end
-	return false;
+    for _, nodeClass in pairs(DB.getChildren(nodeCommander, 'classes')) do
+        if DB.getValue(nodeClass, 'name', ''):lower() == sClass then
+            return true;
+        end
+    end
+    return false;
 end
 
 function calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander)
-	local sSaveDCStat = DB.getValue(nodePowerGroup, "savestat", "");
-	if sSaveDCStat == "" then
-		sSaveDCStat = DB.getValue(nodePowerGroup, "stat", "");
-	end
+    local sSaveDCStat = DB.getValue(nodePowerGroup, 'savestat', '');
+    if sSaveDCStat == '' then
+        sSaveDCStat = DB.getValue(nodePowerGroup, 'stat', '');
+    end
 
-	local nDC = 8 + DB.getValue(nodePowerGroup, "savemod", 0);
-	if (sSaveDCStat or "") ~= "" then
-		nDC = nDC + ActorManager5E.getAbilityBonus(nodeCommander, sSaveDCStat);
-	end
-	if DB.getValue(nodePowerGroup, "saveprof", 1) == 1 then
-		nDC = nDC + ActorManager5E.getAbilityBonus(nodeCommander, "prf");
-	end
-	return nDC;
+    local nDC = 8 + DB.getValue(nodePowerGroup, 'savemod', 0);
+    if (sSaveDCStat or '') ~= '' then
+        nDC = nDC + ActorManager5E.getAbilityBonus(nodeCommander, sSaveDCStat);
+    end
+    if DB.getValue(nodePowerGroup, 'saveprof', 1) == 1 then
+        nDC = nDC + ActorManager5E.getAbilityBonus(nodeCommander, 'prf');
+    end
+    return nDC;
 end
 
 function calculateCommanderGroupAttackModifier(nodePowerGroup, nodeCommander)
-	local sAttackStat = DB.getValue(nodePowerGroup, "atkstat", "");
-	if sAttackStat == "" then
-		sAttackStat = DB.getValue(nodePowerGroup, "stat", "");
-	end
+    local sAttackStat = DB.getValue(nodePowerGroup, 'atkstat', '');
+    if sAttackStat == '' then
+        sAttackStat = DB.getValue(nodePowerGroup, 'stat', '');
+    end
 
-	local nModifier = DB.getValue(nodePowerGroup, "atkmod", 0);
-	if (sAttackStat or "") ~= "" then
-		nModifier = nModifier + ActorManager5E.getAbilityBonus(nodeCommander, sAttackStat);
-	end
-	if DB.getValue(nodePowerGroup, "atkprof", 1) == 1 then
-		nModifier = nModifier + ActorManager5E.getAbilityBonus(nodeCommander, "prf");
-	end
-	return nModifier;
+    local nModifier = DB.getValue(nodePowerGroup, 'atkmod', 0);
+    if (sAttackStat or '') ~= '' then
+        nModifier = nModifier + ActorManager5E.getAbilityBonus(nodeCommander, sAttackStat);
+    end
+    if DB.getValue(nodePowerGroup, 'atkprof', 1) == 1 then
+        nModifier = nModifier + ActorManager5E.getAbilityBonus(nodeCommander, 'prf');
+    end
+    return nModifier;
 end
