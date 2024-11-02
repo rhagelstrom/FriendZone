@@ -6,7 +6,7 @@
 -->
 
 <root>
-    <string name="tab_cohorts">Cohorts</string>
+	<string name="tab_cohorts">Pets</string>
 
     <windowclass name="charsheet" merge="join">
         <sheetdata>
