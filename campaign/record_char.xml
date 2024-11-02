@@ -6,33 +6,33 @@
 -->
 
 <root>
-	<string name="tab_cohorts">Cohorts</string>
+    <string name="tab_cohorts">Cohorts</string>
 
-	<windowclass name="charsheet" merge="join">
-		<sheetdata>
+    <windowclass name="charsheet" merge="join">
+        <sheetdata>
 
-			<sub_charsheet name="notes">
-				<class>charsheet_notes_and_logs</class>
-			</sub_charsheet>
-			<sub_charsheet name="logs">
-				<class>charsheet_cohorts</class>
-			</sub_charsheet>
+            <sub_charsheet name="notes">
+                <class>charsheet_notes_and_logs</class>
+            </sub_charsheet>
+            <sub_charsheet name="logs">
+                <class>charsheet_cohorts</class>
+            </sub_charsheet>
 
-			<tabs_charsheet name="tabs">
-				<script>
-					function onInit()
-						if tab and type(tab) == "table" then
-							for index,tabInfo in ipairs(tab) do
-								if (type(tabInfo) == "table") and (tabInfo.subwindow[1] == "logs") then
-									tabInfo.tabres[1] = "tab_cohorts";
-								end
-							end
-						end
+            <tabs_charsheet name="tabs">
+                <script>
+                    function onInit()
+                        if tab and type(tab) == "table" then
+                            for index,tabInfo in ipairs(tab) do
+                                if (type(tabInfo) == "table") and (tabInfo.subwindow[1] == "logs") then
+                                    tabInfo.tabres[1] = "tab_cohorts";
+                                end
+                            end
+                        end
 
-						super.onInit();
-					end
-				</script>
-			</tabs_charsheet>
-		</sheetdata>
-	</windowclass>
+                        super.onInit();
+                    end
+                </script>
+            </tabs_charsheet>
+        </sheetdata>
+    </windowclass>
 </root>

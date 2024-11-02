@@ -5,6 +5,7 @@
 -- luacheck: globals AssistantGMManager HpManagerPets HpManager
 -- luacheck: globals notifyAddHolderOwnership onLevelChanged levelUpCohort addCohort
 -- luacheck: globals getCommanderNode addUnit addVehicle isCohort
+-- luacheck: globals getControllingClient getRootCommander
 local notifyAddHolderOwnershipOriginal;
 
 function onInit()
@@ -107,4 +108,56 @@ function levelUpCohort(nodeCohort)
         HpManager.updateNpcHitDice(nodeCohort);
     end
     HpManagerPets.updateNpcHitPoints(nodeCohort);
+end
+
+--Returns nil for inactive identities and those owned by the GM
+function getControllingClient(nodeCT)
+    if not nodeCT then
+        Debug.console("Pets.getControllingClient - nodeCT doesn't exist")
+        return
+    end
+    local sPCNode = nil;
+    local rActor = ActorManager.resolveActor(nodeCT);
+    local sNPCowner
+    if ActorManager.isPC(rActor) then
+        sPCNode = ActorManager.getCreatureNodeName(rActor);
+    else
+        sNPCowner = DB.getValue(nodeCT, "NPCowner", "");
+        if sNPCowner == "" then
+            sPCNode = getRootCommander(rActor);
+        end
+    end
+
+    if sPCNode or sNPCowner then
+        for _, value in pairs(User.getAllActiveIdentities()) do
+            if sPCNode then
+                if "charsheet." .. value == sPCNode then
+                    return User.getIdentityOwner(value)
+                    --return DB.getOwner(sPCNode);
+                end
+            end
+            if sNPCowner then
+                local sIDOwner = User.getIdentityOwner(value)
+                if sIDOwner == sNPCowner then
+                    return sIDOwner
+                end
+            end
+        end
+    end
+    return nil;
+end
+
+---For a given cohort actor, determine the root character node that owns it
+function getRootCommander(rActor)
+    if not rActor then
+        Debug.console("Pets.getRootCommander - rActor doesn't exist")
+        return
+    end
+    local sRecord = ActorManager.getCreatureNodeName(rActor);
+    local sRecordSansModule = StringManager.split(sRecord, "@")[1];
+    local aRecordPathSansModule = StringManager.split(sRecordSansModule, ".");
+    if aRecordPathSansModule[1] and aRecordPathSansModule[2] then
+        return aRecordPathSansModule[1] .. "." .. aRecordPathSansModule[2];
+    end
+    return nil;
 end
