@@ -1,0 +1,88 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Release Build
+
+permissions: write-all
+
+env:
+  EXTENSION:  '.ext'
+  FILE_TYPE_EXLUSIONS: '*.git* *.css* *.resources* *.vscode* *.yml /*node_modules/* .editorconfig body.md *.psd *.xcf *.mod forge-thumbnail.png *.pdf LICENSE *.DS_Store*'
+  MODULE_PATH: '.resources/'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo Assets
+      uses: actions/checkout@v4
+
+    - name: Get current Date
+      run: echo "DATE=$(date +'%m/%d/%y')" >> $GITHUB_ENV
+
+    - name: Replace Date
+      uses: jacobtomlinson/gha-find-replace@v3
+      with:
+        find: '~date~'
+        exclude: ${{ env.FILE_TYPE_EXLUSIONS }}
+        replace: ${{ env.DATE }}
+
+    - name: Replace Version
+      uses: jacobtomlinson/gha-find-replace@v3
+      with:
+        find: '~dev_version~'
+        exclude: ${{ env.FILE_TYPE_EXLUSIONS }}
+        replace: ${{github.ref_name}}
+
+    - name: Zip Assets Into ${{ github.event.repository.name }}${{ env.EXTENSION }} File
+      uses: thedoctor0/zip-release@0.7.6
+      with:
+        filename: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+        exclusions: ${{ env.FILE_TYPE_EXLUSIONS }}
+
+    - name: Add ${{ github.event.repository.name }}${{ env.EXTENSION }}, ${{ vars.MODULE }}' to Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+        path: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+
+  upload:
+    if: ${{ ! contains(github.ref_name,'-rc') }} # Don't update the Forge on test builds. Tags with -rc
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout FG-Forge-Updater repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'rhagelstrom/FG-Forge-Updater'
+
+      - name: Set up python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install general dependencies
+        run: |
+          pip install -U pip
+          pip install .
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+
+      - name: Upload ${{ github.event.repository.name }}${{ env.EXTENSION }} to FG Forge
+        env:
+          FG_USER_NAME: ${{ vars.FG_USER_NAME }}
+          FG_USER_PASS: ${{ secrets.FG_USER_PASS }}
+          FG_ITEM_ID: ${{ vars.FG_ITEM_ID }}
+          FG_README_UPDATE: ${{ vars.FG_README_UPDATE }}
+          FG_UL_FILE: ${{ github.event.repository.name }}${{ env.EXTENSION }}
+        run: |
+          python src/main.py
