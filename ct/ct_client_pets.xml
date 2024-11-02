@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="client_ct_entry" merge="join">
+        <script file="ct/scripts/clientct_entry_pets.lua" />
+        <sheetdata>
+<!--
+            <hnx name="init" />
+            <hnx name="ac" />
+            <hsx name="speed" />
+-->
+
+            <button_ct_section_active_client name="button_section_active" insertbefore="friendfoe" />
+            <button_ct_section_targets name="button_section_targets" insertbefore="friendfoe" />
+
+            <sub_ct_section name="sub_targets" />
+        </sheetdata>
+    </windowclass>
+
+    <template name="button_ct_section_active_client" copy="button_ct_section_active">
+        <button_ct_section>
+            <script>
+                function onButtonPress()
+                    local node = window.getDatabaseNode();
+                    if not node then
+                        return
+                    end
+                    local nodeName = DB.getValue(node, "name")
+                    local sControllingClient = Pets.getControllingClient(node)
+                    local sUserName = Session.UserName
+                    if sControllingClient ~= Session.UserName then
+                        setValue(0)
+                    end
+                end
+            </script>
+        </button_ct_section>
+    </template>
+    <template name="spacer_ct_header_buttons_client">
+        <spacer_ct_header_right name="spacer_buttons_header">
+            <anchored width="80" />
+        </spacer_ct_header_right>
+    </template>
+</root>

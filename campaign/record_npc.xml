@@ -6,62 +6,62 @@
 -->
 
 <root>
-	<windowclass name="npc" merge="join">
-		<tab merge="add">
-			<name>cohorts</name>
-			<resource>tab_cohorts</resource>
-			<class>charsheet_cohorts</class>
-			<embed />
-		</tab>
-	</windowclass>
+    <windowclass name="npc" merge="join">
+        <tab merge="add">
+            <name>cohorts</name>
+            <resource>tab_cohorts</resource>
+            <class>charsheet_cohorts</class>
+            <embed />
+        </tab>
+    </windowclass>
 
-	<windowclass name="npc_combat_top_2024" merge="join">
-		<sheetdata>
-			<number_content_column name="hp">
-				<script>
-					function onInit()
-						registerMenuItem(Interface.getString("menu_reparse_hitpoints"), "spell_heal", 3);
-					end
-					function onMenuSelection(selection)
-						if selection == 3 then
-							HpManagerPets.updateNpcHitPoints(window.getDatabaseNode());
-						end
-					end
-				</script>
-			</number_content_column>
-		</sheetdata>
-	</windowclass>
+    <windowclass name="npc_combat_top_2024" merge="join">
+        <sheetdata>
+            <number_content_column name="hp">
+                <script>
+                    function onInit()
+                        registerMenuItem(Interface.getString("menu_reparse_hitpoints"), "spell_heal", 3);
+                    end
+                    function onMenuSelection(selection)
+                        if selection == 3 then
+                            HpManagerPets.updateNpcHitPoints(window.getDatabaseNode());
+                        end
+                    end
+                </script>
+            </number_content_column>
+        </sheetdata>
+    </windowclass>
 
-	<windowclass name="npc_combat_bottom_2024" merge="join">
-		<sheetdata>
-			<string_content_columnh_multiroll name="skills" >
-				<script file="campaign/scripts/npc_skill.lua" />
-			</string_content_columnh_multiroll>
-		</sheetdata>
-	</windowclass>
+    <windowclass name="npc_combat_bottom_2024" merge="join">
+        <sheetdata>
+            <string_content_columnh_multiroll name="skills" >
+                <script file="campaign/scripts/npc_skill.lua" />
+            </string_content_columnh_multiroll>
+        </sheetdata>
+    </windowclass>
 
-	<windowclass name="npc_combat_top_2014" merge="join">
-		<sheetdata>
-			<number_content_column name="hp">
-				<script>
-					function onInit()
-						registerMenuItem(Interface.getString("menu_reparse_hitpoints"), "spell_heal", 3);
-					end
-					function onMenuSelection(selection)
-						if selection == 3 then
-							HpManagerPets.updateNpcHitPoints(window.getDatabaseNode());
-						end
-					end
-				</script>
-			</number_content_column>
-		</sheetdata>
-	</windowclass>
+    <windowclass name="npc_combat_top_2014" merge="join">
+        <sheetdata>
+            <number_content_column name="hp">
+                <script>
+                    function onInit()
+                        registerMenuItem(Interface.getString("menu_reparse_hitpoints"), "spell_heal", 3);
+                    end
+                    function onMenuSelection(selection)
+                        if selection == 3 then
+                            HpManagerPets.updateNpcHitPoints(window.getDatabaseNode());
+                        end
+                    end
+                </script>
+            </number_content_column>
+        </sheetdata>
+    </windowclass>
 
-	<windowclass name="npc_combat_bottom_2014" merge="join">
-		<sheetdata>
-			<string_content_columnh_multiroll name="skills" >
-				<script file="campaign/scripts/npc_skill.lua" />
-			</string_content_columnh_multiroll>
-		</sheetdata>
-	</windowclass>
+    <windowclass name="npc_combat_bottom_2014" merge="join">
+        <sheetdata>
+            <string_content_columnh_multiroll name="skills" >
+                <script file="campaign/scripts/npc_skill.lua" />
+            </string_content_columnh_multiroll>
+        </sheetdata>
+    </windowclass>
 </root>

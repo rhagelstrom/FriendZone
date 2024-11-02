@@ -5,7 +5,9 @@
 -- luacheck: globals Pets HpManager
 -- luacheck: globals onLinkChanged linkNPCOrVehicleFields
 function onInit()
-    super.onInit();
+    if super and super.onInit then
+        super.onInit();
+    end
     onLinkChanged(); -- call the overload.
 end
 
@@ -19,10 +21,15 @@ function onLinkChanged()
         name.setLine(false);
     end
 
-    super.onLinkChanged();
+    if super and super.onLinkChanged then
+        super.onLinkChanged();
+    end
 end
 
 function linkNPCOrVehicleFields()
+    if not Session.IsHost then
+        return
+    end
     local nodeChar = link.getTargetDatabaseNode();
     if nodeChar then
         self.name.setLink(nodeChar.createChild('name', 'string'), true);

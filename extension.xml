@@ -26,44 +26,45 @@ SOFTWARE.
 -->
 
 <root release="3.0" version="3">
-	<properties>
-		<name>Feature: Pets</name>
-		<version>~dev_version~</version>
-		<author>Ryan Hagelstrom</author>
-		<description>Adds support for companions of any sort.</description>
-		<loadorder>150</loadorder>
-		<ruleset>
-			<name>5E</name>
-		</ruleset>
-	</properties>
+    <properties>
+        <name>Feature: Pets</name>
+        <version>~dev_version~</version>
+        <author>Ryan Hagelstrom</author>
+        <description>Adds support for companions of any sort.</description>
+        <loadorder>150</loadorder>
+        <ruleset>
+            <name>5E</name>
+        </ruleset>
+    </properties>
 
-	<base>
-		<script name="ActionSkillPets" file="scripts/manager_action_skill_pets.lua" />
-		<script name="ActorManagerPets" file="scripts/manager_actor_pets.lua" />
-		<script name="CombatManagerPets" file="scripts/manager_combat_pets.lua" />
-		<script name="Pets" file="scripts/pets.lua" />
-		<script name="HpManagerPets" file="scripts/manager_hp_pets.lua" />
-		<script name="PowerManagerPets" file="scripts/manager_power_pets.lua" />
+    <base>
+        <script name="ActionSkillPets" file="scripts/manager_action_skill_pets.lua" />
+        <script name="ActorManagerPets" file="scripts/manager_actor_pets.lua" />
+        <script name="CombatManagerPets" file="scripts/manager_combat_pets.lua" />
+        <script name="Pets" file="scripts/pets.lua" />
+        <script name="HpManagerPets" file="scripts/manager_hp_pets.lua" />
+        <script name="PowerManagerPets" file="scripts/manager_power_pets.lua" />
 
-		<includefile source="campaign/record_char.xml" />
-		<includefile source="campaign/record_char_notes_and_logs.xml" />
-		<includefile source="campaign/record_char_cohorts.xml" />
-		<includefile source="campaign/record_npc.xml" />
-		<includefile source="ct/ct_host.xml" />
+        <includefile source="campaign/record_char.xml" />
+        <includefile source="campaign/record_char_notes_and_logs.xml" />
+        <includefile source="campaign/record_char_cohorts.xml" />
+        <includefile source="campaign/record_npc.xml" />
+        <includefile source="ct/ct_host.xml" />
+        <includefile source="ct/ct_client_pets.xml" />
 
-		<includefile source="strings/strings.xml" />
+        <includefile source="strings/strings.xml" />
 
-		<icon name="Pets_icon" file="graphics/icons/pets.webp" />
+        <icon name="Pets_icon" file="graphics/icons/pets.webp" />
 
-		<script name="PowerUpPets">
-			function onInit()
-				if PowerUp then
-					PowerUp.registerExtension("Pets", "~dev_version~");
-				end
-			end
-		</script>
-	</base>
+        <script name="PowerUpPets">
+            function onInit()
+                if PowerUp then
+                    PowerUp.registerExtension("Pets", "~dev_version~");
+                end
+            end
+        </script>
+    </base>
 
-	<announcement text="Pets ~dev_version~ by rhagelstrom,MeAndUnique,Farratto" icon="Pets_icon" font="emotefont" />
+    <announcement text="Pets ~dev_version~ by rhagelstrom,MeAndUnique,Farratto" icon="Pets_icon" font="emotefont" />
 
 </root>
