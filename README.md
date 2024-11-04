@@ -6,14 +6,37 @@
 **Current Version:** ~dev_version~ \
 **Updated:** ~date~
 
-## Adds support for companions of any sort
+Adds support for companions of any sort
+
+## Features
 
 * NPC's can be given to players as Pets to control
-* Support for pets that scale in power with their Parent, such as Primal Companions from Tasha's Cauldron of Everything or MCDM's Monstrous Companions.
+* Support for pets that scale in power with their caregiver, such as Primal Companions from Tasha's Cauldron of Everything or MCDM's Monstrous Companions.
 
 ## Order of Adding Pet to Character Sheet
 
 To add a pet to a character sheet the DM must add the pet in the following order
+
+* Drag NPC to the players 'pets' tab
+* Drag the NPC link from the players 'pets' tab to the Combat Tracker
+* Drag the token from the CT and place on map.
+
+## Primal Companion
+
+* Primal Companion NPC from TCoE (e.g. Beast of the Land) on to the Ranger's Cohorts tab and add to the CT. All statistics that are influenced by the player will now automatically parse and evaluate accordingly.
+* A trait can be added to any NPC with the following text to act as a Primal Companion. "You can add your proficiency bonus to any ability check or saving throw that the beast makes."
+
+## Homebrew
+
+The following is how to adjust individual fields to auto scale with the caregiver proficiency bonus.
+
+* Armor Class: + PB (natural armor)
+* Damage: On hit: 1d6 +PB slashing Damage
+* Saving Throws: Str +3 (+ PB)
+* Skills: Perception: +4 (+ PB)
+
+### Notes Tab
+
 
 * Drag NPC to the players 'pets' tab
 * Drag the NPC link from the players 'pets' tab to the Combat Tracker

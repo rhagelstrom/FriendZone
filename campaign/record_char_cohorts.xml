@@ -60,7 +60,7 @@
                     <right offset="-10" />
                 </anchored>
                 <static textres="char_cohorts_label_cohorts" />
-                <icons>char_cohorts</icons>
+                <icons>Pets_icon</icons>
             </label_charframetop>
             <list_text name="cohortlist">
                 <anchored>
@@ -88,7 +88,7 @@
                     <right offset="-10" />
                 </anchored>
                 <static textres="char_cohorts_label_vehicles" />
-                <icons>char_cohorts</icons>
+                <icons>Pets_icon</icons>
             </label_charframetop>
             <list_text name="vehiclelist">
                 <anchored>
@@ -116,7 +116,7 @@
                     <right offset="-10" />
                 </anchored>
                 <static textres="char_cohorts_label_units" />
-                <icons>char_cohorts</icons>
+                <icons>Pets_icon</icons>
                 <invisible />
             </label_charframetop>
             <list_text name="unitlist">

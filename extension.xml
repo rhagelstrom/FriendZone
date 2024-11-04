@@ -55,6 +55,7 @@ SOFTWARE.
         <includefile source="strings/strings.xml" />
 
         <icon name="Pets_icon" file="graphics/icons/pets.webp" />
+        <icon name="pets_button" file="graphics/icons/pets-button.webp" />
 
         <script name="PowerUpPets">
             function onInit()

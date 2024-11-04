@@ -56,6 +56,7 @@ function updateNpcHitPoints(nodeNPC)
         local nodeCommander = Pets.getCommanderNode(nodeNPC);
         if nodeCommander then
             local sText = DB.getValue(nodeNPC, 'text', '');
+
             local aLines = StringManager.splitByPattern(sText, '<p>', true);
             for _, sLine in ipairs(aLines) do
                 sLine = sLine:gsub('</?%w>', ''):lower();

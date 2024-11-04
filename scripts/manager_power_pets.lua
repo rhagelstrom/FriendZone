@@ -27,6 +27,7 @@ local COMMANDER_GROUP_ENCODING = 2;
 local MULTIPLY_PROFICIENCY_ENCODING = 3;
 local DICE_PROFICIENCY_ENCODING = 4;
 local MULTIPLY_LEVEL_ENCODING = 5;
+local COMMANDER_ABILITY_ENCODING = 6;
 
 local aStoredNames = {};
 
@@ -51,7 +52,7 @@ function parsePower(tData)
         tData.sDesc = tData.sDesc:gsub('[%+%-]%d+ %+ ?PB', encodeNumericAddition);
         tData.sDesc = tData.sDesc:gsub('%d+d%d+ %+ ?PB', encodeDiceAddition);
         tData.sDesc = tData.sDesc:gsub('a DC %d+ [p%+]l?u?s? ?PB', encodeNumericReplacement);
-        tData.sDesc = tData.sDesc:gsub('DC Players?', encodeDcPlayerReplacement);
+        tData.sDesc = tData.sDesc:gsub('DC Players? %a+', encodeDcPlayerReplacement);
         tData.sDesc = tData.sDesc:gsub('your .+ attack modifier', encodeAttackModifierReplacement);
         tData.sDesc = tData.sDesc:gsub('extra PB ?%w* damage', encodeExtraDamage);
         tData.sDesc = tData.sDesc:gsub('takes PB ?%w* damage', encodeExtraDamage);
@@ -120,8 +121,11 @@ function encodeNumericReplacement(sMatch)
 end
 
 function encodeDcPlayerReplacement(sMatch)
-    local nLengthDiff = sMatch:len() - 3 - ENCODING_LENGTH;
-    return 'DC ' .. calculateEncoding(COMMANDER_GROUP_ENCODING, 0, nLengthDiff);
+    local sAbility = sMatch:match('(%a+)$') or '';
+    local nLengthDiff = sMatch:len() - 4 - sAbility:len() - ENCODING_LENGTH;
+    table.insert(aStoredNames, sAbility:lower());
+    local nIndex = #aStoredNames;
+    return 'DC ' .. calculateEncoding(COMMANDER_ABILITY_ENCODING, nIndex, nLengthDiff) .. ' ' .. sAbility;
 end
 
 function encodeAttackModifierReplacement(sMatch)
@@ -200,7 +204,7 @@ end
 function postProcessDamageAndHeal(rDamage, nodeCommander)
     local nType;
     local nIndex;
-    local nOffset;
+    local nOffset = 0;
     local rCommander = ActorManager.resolveActor(nodeCommander);
     local nProfBonus = ActorManager5E.getAbilityScore(rCommander, 'prf');
     for _, rClause in ipairs(rDamage.clauses) do
@@ -241,8 +245,9 @@ function postProcessSave(rSave, nodeCommander)
 
     local nType;
     local nOffset;
+    local nIndex;
 
-    nType, _, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
+    nType, nIndex, nOffset, rSave.savemod = decodeMetadata(rSave.savemod);
 
     if nType == ADD_PROFICIENCY_ENCODING then
         -- Support for Superior Ferocity
@@ -260,6 +265,14 @@ function postProcessSave(rSave, nodeCommander)
         if nodePowerGroup then
             rSave.savemod = calculateCommanderGroupSaveDc(nodePowerGroup, nodeCommander);
         end
+    elseif nType == COMMANDER_ABILITY_ENCODING then
+        local rCommander = ActorManager.resolveActor(nodeCommander);
+        local sAbilityEffect = DataCommon.ability_ltos[aStoredNames[nIndex]];
+        local nAbilityMod = 0;
+        if sAbilityEffect then
+            nAbilityMod, _ = EffectManager5E.getEffectsBonus(rCommander, sAbilityEffect, true);
+        end
+        rSave.savemod = ActorManager5E.getAbilityScore(rCommander, aStoredNames[nIndex]) + nAbilityMod;
     end
 
     return nOffset;
