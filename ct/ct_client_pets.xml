@@ -9,11 +9,6 @@
     <windowclass name="client_ct_entry" merge="join">
         <script file="ct/scripts/clientct_entry_pets.lua" />
         <sheetdata>
-<!--
-            <hnx name="init" />
-            <hnx name="ac" />
-            <hsx name="speed" />
--->
 
             <button_ct_section_active_client name="button_section_active" insertbefore="friendfoe" />
             <button_ct_section_targets name="button_section_targets" insertbefore="friendfoe" />
