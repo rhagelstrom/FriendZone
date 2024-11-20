@@ -2,119 +2,39 @@
 -- Please see the license.txt file included with this distribution fo
 -- attribution and copyright information.
 --
--- luacheck: globals onIDChanged onFactionChanged onActiveChanged updateDisplay getRecordType isRecordType
--- luacheck: globals isPC isActive getSectionToggle onSectionChanged
+-- luacheck: globals onActiveChanged onSectionChanged
 function onInit()
-    -- Show active section, if combatant is active
-    self.onActiveChanged();
-
+    if super and super.onInit then
+        super.onInit();
+    end
     -- Set up the PC links
-    self.onFactionChanged();
+    if super and super.onFactionChanged then
+        super.onFactionChanged();
+    end
 end
 
-function onIDChanged()
-    local nodeRecord = getDatabaseNode();
-    local sClass = link.getValue();
-    local sRecordType = RecordDataManager.getRecordTypeFromDisplayClass(sClass);
-    local bID = RecordDataManager.getIDState(sRecordType, nodeRecord, true);
-
-    name.setVisible(bID);
-    nonid_name.setVisible(not bID); --luacheck: ignore 143
-
-    self.onActiveChanged();
-end
-function onFactionChanged()
-    -- Update the entry frame
-    self.updateDisplay();
-end
---function onVisibilityChanged()
---    TokenManager.updateVisibility(getDatabaseNode());
---    windowlist.onVisibilityToggle();
---end
 function onActiveChanged()
-    self.updateDisplay();
-end
-
-function updateDisplay()
-    local sFaction = friendfoe.getStringValue();
-
-    if initresult then
-        local sOptCTSI = OptionsManager.getOption("CTSI");
-        local bShowInit = ((sOptCTSI == "friend") and (sFaction == "friend")) or (sOptCTSI == "on");
-        initresult.setVisible(bShowInit);
+    if super and super.onActiveChanged then
+        super.onActiveChanged();
     end
-
-    if active.getValue() == 1 then
-        name.setFont("sheetlabel");
-        nonid_name.setFont("sheetlabel"); --luacheck: ignore 143
-
-        active_spacer_top.setVisible(true);
-        active_spacer_bottom.setVisible(true);
-
-        if sFaction == "friend" then
-            setFrame("ctentrybox_friend_active"); --luacheck: ignore 113
-        elseif sFaction == "neutral" then
-            setFrame("ctentrybox_neutral_active"); --luacheck: ignore 113
-        elseif sFaction == "foe" then
-            setFrame("ctentrybox_foe_active"); --luacheck: ignore 113
-        else
-            setFrame("ctentrybox_active"); --luacheck: ignore 113
-        end
-
-        windowlist.scrollToWindow(self);
-    else
-        name.setFont("sheettext");
-        nonid_name.setFont("sheettext"); --luacheck: ignore 143
-
-        active_spacer_top.setVisible(false);
-        active_spacer_bottom.setVisible(false);
-
-        if sFaction == "friend" then
-            setFrame("ctentrybox_friend"); --luacheck: ignore 113
-        elseif sFaction == "neutral" then
-            setFrame("ctentrybox_neutral"); --luacheck: ignore 113
-        elseif sFaction == "foe" then
-            setFrame("ctentrybox_foe"); --luacheck: ignore 113
-        else
-            setFrame("ctentrybox"); --luacheck: ignore 113
-        end
-    end
-end
-
---
---    HELPERS
---
-
-function getRecordType()
-    local sClass = link.getValue();
-    return RecordDataManager.getRecordTypeFromDisplayClass(sClass);
-end
-function isRecordType(s)
-    return (self.getRecordType() == s);
-end
-function isPC()
-    return self.isRecordType("charsheet");
-end
-function isActive()
-    return (active.getValue() == 1);
+    self.onSectionChanged("active", true);
 end
 
 --
 --    SECTION HANDLING
 --
 
-function getSectionToggle(sKey)
-    local bResult = false;
-
-    local sButtonName = "button_section_" .. sKey;
-    local cButton = self[sButtonName];
-    if cButton then
-        bResult = (cButton.getValue() == 1);
+function onSectionChanged(sKey, bTurnChanged)
+    if bTurnChanged and (sKey == "active") then
+        if Pets.getControllingClient(getDatabaseNode()) == Session.UserName then
+            local cButton = self["button_section_" .. sKey];
+            if self.isActive() then
+                cButton.setValue(1);
+            else
+                cButton.setValue(0);
+            end
+        end
     end
-
-    return bResult;
-end
-function onSectionChanged(sKey)
     local bShow = self.getSectionToggle(sKey);
 
     local sSectionName = "sub_" .. sKey;
