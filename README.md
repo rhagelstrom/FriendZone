@@ -37,7 +37,6 @@ The following is how to adjust individual fields to auto scale with the caregive
 
 ### Notes Tab
 
-
 * Drag NPC to the players 'pets' tab
 * Drag the NPC link from the players 'pets' tab to the Combat Tracker
 * Drag the token from the CT and place on map.
