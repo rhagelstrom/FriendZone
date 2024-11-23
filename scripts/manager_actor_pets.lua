@@ -3,12 +3,12 @@
 -- attribution and copyright information.
 --
 -- luacheck: globals Pets StringManager
--- luacheck: globals getActorRecordTypeFromPath getSave getCheck getDefenseValue
+-- luacheck: globals getActorRecordTypeFromPath getSave getDefenseValue
 -- luacheck: globals hasProfBonusTrait
 local getActorRecordTypeFromPathOriginal;
 local getSaveOriginal;
-local getCheckOriginal;
 local getDefenseValueOriginal;
+local modRollOriginal;
 
 function onInit()
     getActorRecordTypeFromPathOriginal = ActorManager.getActorRecordTypeFromPath;
@@ -16,6 +16,10 @@ function onInit()
 
     getSaveOriginal = ActorManager5E.getSave;
     ActorManager5E.getSave = getSave;
+
+    modRollOriginal = ActionSkill.modRoll;
+    ActionSkill.modRoll = modRoll;
+    ActionsManager.registerModHandler("skill", modRoll);
 
     getCheckOriginal = ActorManager5E.getCheck;
     ActorManager5E.getCheck = getCheck;
@@ -63,7 +67,6 @@ function getCheck(rActor, sCheck, sSkill)
     if not nodeActor then
         return 0, false, false, '';
     end
-
     local nMod, bADV, bDIS, sAddText = getCheckOriginal(rActor, sCheck, sSkill);
     if sNodeType ~= 'pc' and Pets.isCohort(rActor) and
         (hasProfBonusTrait(nodeActor, 'ability check') or
@@ -106,4 +109,9 @@ function hasProfBonusTrait(nodeCohort, sType)
             return true;
         end
     end
+end
+
+function modRoll(rSource, rTarget, rRoll)
+    modRollOriginal(rSource, rTarget, rRoll);
+    rRoll.nMod = rRoll.nMod + ActionSkillPets.getCommanderProfBonus();
 end

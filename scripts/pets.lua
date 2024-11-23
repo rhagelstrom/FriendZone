@@ -113,7 +113,6 @@ end
 --Returns nil for inactive identities and those owned by the GM
 function getControllingClient(nodeCT)
     if not nodeCT then
-        Debug.console("Pets.getControllingClient - nodeCT doesn't exist")
         return
     end
     local sPCNode = nil;
@@ -150,7 +149,6 @@ end
 ---For a given cohort actor, determine the root character node that owns it
 function getRootCommander(rActor)
     if not rActor then
-        Debug.console("Pets.getRootCommander - rActor doesn't exist")
         return
     end
     local sRecord = ActorManager.getCreatureNodeName(rActor);
