@@ -2,7 +2,7 @@
 -- Please see the license.txt file included with this distribution fo
 -- attribution and copyright information.
 --
--- luacheck: globals onActiveChanged onSectionChanged
+-- luacheck: globals Pets onActiveChanged onSectionChanged
 function onInit()
     if super and super.onInit then
         super.onInit();

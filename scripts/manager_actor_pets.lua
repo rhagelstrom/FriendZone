@@ -2,13 +2,14 @@
 -- Please see the license.txt file included with this distribution for
 -- attribution and copyright information.
 --
--- luacheck: globals Pets StringManager
+-- luacheck: globals Pets ActionSkillPets StringManager
 -- luacheck: globals getActorRecordTypeFromPath getSave getDefenseValue
--- luacheck: globals hasProfBonusTrait
+-- luacheck: globals hasProfBonusTrait modRoll getCheck
 local getActorRecordTypeFromPathOriginal;
 local getSaveOriginal;
 local getDefenseValueOriginal;
 local modRollOriginal;
+local getCheckOriginal;
 
 function onInit()
     getActorRecordTypeFromPathOriginal = ActorManager.getActorRecordTypeFromPath;
@@ -19,7 +20,7 @@ function onInit()
 
     modRollOriginal = ActionSkill.modRoll;
     ActionSkill.modRoll = modRoll;
-    ActionsManager.registerModHandler("skill", modRoll);
+    ActionsManager.registerModHandler('skill', modRoll);
 
     getCheckOriginal = ActorManager5E.getCheck;
     ActorManager5E.getCheck = getCheck;
