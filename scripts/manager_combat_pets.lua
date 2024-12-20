@@ -51,11 +51,12 @@ function showTurnMessage(nodeEntry, bActivate, bSkipBell)
 end
 
 function centerOnToken(nodeEntry, bOpen)
-    centerOnTokenOriginal(nodeEntry, bOpen);
+    local bReturn = centerOnTokenOriginal(nodeEntry, bOpen);
 
     if not Session.IsHost and Pets.isCohort(nodeEntry) and DB.isOwner(ActorManager.getCreatureNode(nodeEntry)) then
-        ImageManager.centerOnToken(CombatManager.getTokenFromCT(nodeEntry), bOpen);
+        bReturn = ImageManager.centerOnToken(CombatManager.getTokenFromCT(nodeEntry), bOpen);
     end
+    return bReturn
 end
 
 function onNPCPostAdd(tCustom)
