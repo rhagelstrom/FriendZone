@@ -46,7 +46,6 @@ SOFTWARE.
         <script name="PowerManagerPets" file="scripts/manager_power_pets.lua" />
 
         <includefile source="campaign/record_char.xml" />
-        <includefile source="campaign/record_char_notes_and_logs.xml" />
         <includefile source="campaign/record_char_cohorts.xml" />
         <includefile source="campaign/record_npc.xml" />
         <includefile source="ct/ct_host.xml" />
