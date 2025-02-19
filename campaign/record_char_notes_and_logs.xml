@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="charsheet_notes_and_logs">
+        <script>
+            function onDrop(x, y, draginfo)
+                if draginfo.isType("shortcut") then
+                    local sClass, sRecord = draginfo.getShortcutData();
+                    if sClass == "ref_adventure" then
+                        return CharBuildDropManager.addInfoDB(getDatabaseNode(), sClass, sRecord);
+                    end
+                end
+            end
+        </script>
+        <sheetdata>
+            <anchor_content_top />
+            <anchor_content_bottom />
+
+            <area_content_framed_groupbox_bottom name="area_controls">
+                <anchored height="20" />
+            </area_content_framed_groupbox_bottom>
+            <button_iedit name="sheet_iedit">
+                <anchored to="area_controls" position="insidetopright" offset="0,0" />
+                <edittarget>content</edittarget>
+            </button_iedit>
+
+            <sub_content_scroll name="content">
+                <class>charsheet_notes_logs_contents</class>
+            </sub_content_scroll>
+            <scrollbar_content />
+        </sheetdata>
+    </windowclass>
+
+    <!-- charsheet_log_contents -->
+    <windowclass name="charsheet_notes_logs_contents">
+        <sheetdata>
+            <anchor_column name="columnanchor" />
+
+            <subwindow name="notes">
+                <anchored>
+                    <top parent="columnanchor" anchor="bottom" relation="relative" offset="0" />
+                    <left />
+                    <right />
+                </anchored>
+                <class>charsheet_notes_contents</class>
+                <activate />
+            </subwindow>
+
+            <subwindow name="logs">
+                <anchored>
+                    <top parent="columnanchor" anchor="bottom" relation="relative" offset="0" />
+                    <left />
+                    <right />
+                </anchored>
+                <class>charsheet_logs_contents</class>
+                <activate />
+            </subwindow>
+        </sheetdata>
+    </windowclass>
+</root>
