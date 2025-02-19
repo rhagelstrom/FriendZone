@@ -4,28 +4,24 @@ Please see the license.html file included with this distribution for
 attribution and copyright information.
 -->
 <root>
-	<string name="tab_cohorts">Pets</string>
-	<windowclass name="charsheet" merge="merge">
-		<tab merge="add">
-			<name>pets</name>
-			<resource>tab_cohorts</resource>
-			<class>charsheet_cohorts</class>
-		</tab>
+    <windowclass name="charsheet_notes" merge='join'>
+        <sheetdata>
+            <sub_content_framed_groupbox_bottom name="logs">
+                <class>charsheet_logs_contents</class>
+            </sub_content_framed_groupbox_bottom>
+        </sheetdata>
+    </windowclass>
+
+	<windowclass name="charsheet" merge="join">
 		<script>
 			function onInit()
-			    local tTabs = WindowTabManager.getTabsFromWindow(self);
-			    local nInsertLoc = 1;
-			    for index,tabInfo in ipairs(tTabs) do
-			        if tabInfo.sName == 'notes' then
-			            nInsertLoc = index;
-			        end
-			        if tabInfo.sName == 'pets' then
-			            table.remove(tTabs, index)
-			            table.insert(tTabs, nInsertLoc, tabInfo);
-			            break;
-			        end
-			    end
-			    WindowTabManager.updateTabDisplay(self, tTabs);
+                local tTabs = WindowTabManager.getTabsFromWindow(self);
+
+                WindowTabManager.unregisterTab('charsheet', 'logs');
+                WindowTabManager.registerTab('charsheet', {sName = 'pets', sTabRes = 'tab_cohorts',
+                    sClass = 'charsheet_cohorts', sInsertBefore = 'notes'})
+
+                WindowTabManager.updateTabDisplay(self, tTabs);
 
 			    if super and super.onInit() then
 			        super.onInit();
