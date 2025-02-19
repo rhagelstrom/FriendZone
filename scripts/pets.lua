@@ -18,6 +18,12 @@ function onInit()
     end
 end
 
+function onTabletopInit()
+    Debug.console(WindowTabManager.getTabs('charsheet'));
+    WindowTabManager.unregisterTab('charsheet', 'notes');
+    WindowTabManager.unregisterTab('charsheet', 'log');
+end
+
 function onClose()
     if Session.IsHost then
         DB.removeHandler('charsheet.*.level', 'onUpdate', onLevelChanged)

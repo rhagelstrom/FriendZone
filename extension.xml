@@ -47,6 +47,7 @@ SOFTWARE.
 
         <includefile source="campaign/record_char.xml" />
         <includefile source="campaign/record_char_cohorts.xml" />
+        <!-- <includefile source="campaign/record_char_notes_and_logs.xml" /> -->
         <includefile source="campaign/record_npc.xml" />
         <includefile source="ct/ct_host.xml" />
         <includefile source="ct/ct_client_pets.xml" />

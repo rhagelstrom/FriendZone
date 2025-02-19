@@ -3,6 +3,7 @@
     <string name="char_cohorts_label_cohorts">PETS</string>
     <string name="char_cohorts_label_units">UNITS</string>
     <string name="char_cohorts_label_vehicles">VEHICLES</string>
+	<string name="tab_cohorts">Pets</string>
 
     <string name="menu_reparse_hitpoints">Reparse Hit Points</string>
 
