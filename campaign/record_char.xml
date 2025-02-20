@@ -6,11 +6,24 @@ attribution and copyright information.
 <root>
     <windowclass name="charsheet_notes" merge='join'>
         <sheetdata>
-            <sub_content_framed_groupbox_bottom name="logs">
-                <class>charsheet_logs_contents</class>
-            </sub_content_framed_groupbox_bottom>
+            <sub_content_framed_groupbox name="replace">
+                <class>charsheet_notes_logs_contents</class>
+            </sub_content_framed_groupbox>
         </sheetdata>
     </windowclass>
+
+	<windowclass name="charsheet_notes_logs_contents">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<anchor_content_top />
+			<sub_content_top name="notes">
+				<class>charsheet_notes_contents</class>
+			</sub_content_top>
+			<sub_content_top name="logs">
+				<class>charsheet_logs_contents</class>
+			</sub_content_top>
+		</sheetdata>
+	</windowclass>
 
 	<windowclass name="charsheet" merge="join">
 		<script>
