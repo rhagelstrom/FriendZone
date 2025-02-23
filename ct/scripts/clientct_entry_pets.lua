@@ -2,7 +2,7 @@
 -- Please see the license.txt file included with this distribution fo
 -- attribution and copyright information.
 --
--- luacheck: globals Pets onActiveChanged onSectionChanged
+-- luacheck: globals Pets onActiveChanged onSectionChanged updateHealthDisplay sub_active
 function onInit()
     if super and super.onInit then
         super.onInit();
@@ -69,5 +69,29 @@ function onSectionChanged(sKey, bTurnChanged)
     local cSummary = self[sSummaryName];
     if cSummary then
         cSummary.onToggle();
+    end
+end
+
+function updateHealthDisplay()
+    local sOption;
+    if friendfoe.getStringValue() == "friend" then
+        sOption = OptionsManager.getOption("SHPC");
+    else
+        sOption = OptionsManager.getOption("SHNPC");
+    end
+
+    local bShowDetail = (sOption == "detailed");
+    local bShowStatus = (sOption == "status");
+
+    hptotal.setVisible(bShowDetail);
+    hptemp.setVisible(bShowDetail);
+    wounds.setVisible(bShowDetail);
+    status.setVisible(bShowStatus);
+
+    local bShowHealthBase = not OptionsManager.isOption("SHPC", "off") or not OptionsManager.isOption("SHNPC", "off");
+    healthbase.setVisible(bShowHealthBase);
+
+    if sub_active and sub_active.subwindow and sub_active.subwindow.updateHealthDisplay then
+        sub_active.subwindow.updateHealthDisplay(sOption);
     end
 end
